@@ -30,8 +30,9 @@ dados* insere_item();
 void mostrar_lista(dados* lista);
 dados* localiza_por_nome(string nome, dados* lista);
 void mostra_dados_pessoa(dados* p);
-dados* exclui_ultima_pessoa(dados* p, dados* lista);
-dados* exclui_primeira_pessoa(dados* p, dados* lista);
+dados* exclui_ultima_pessoa(dados* lista);
+void* exclui_primeira_pessoa(dados* lista);
+void* exclui_pessoa(dados* p, dados* lista);
 
 int main()
 {
@@ -83,12 +84,17 @@ int main()
               //verifica se o item a ser excluido é o ultimo da lista
                   if(aux->prox == lista->prox)
                   {
-			        	  lista = exclui_ultima_pessoa(aux, lista);
+			        	  lista = exclui_ultima_pessoa(lista);
                   }
               //verifica se o item a ser excluido é o primeiro da lista
-                  if(aux->prox == NULL)
+                    if(aux->prox == NULL)
                   {
-                  aux = exclui_primeira_pessoa(aux, lista);
+                    exclui_primeira_pessoa(lista);
+                  }
+              //verifica se é um item valido
+                  if(aux->prox <= lista->prox)
+                  {
+                  exclui_pessoa(aux, lista);
                   }
               printf("excluido!\n");
                   
@@ -123,27 +129,45 @@ int menu()
 	return opcao;
 }
 
-dados* exclui_ultima_pessoa(dados* p, dados* lista)
+dados* exclui_ultima_pessoa(dados* lista)
 {
-    dados* aux = lista->prox;
-    lista = aux;
+  //exclui ultima pessoa adicionada
+    dados* aux = lista->prox; 
+    lista = aux; //faz lista apontar para onde o ultimo elemento apontava
     return lista;
 }
 
-dados* exclui_primeira_pessoa(dados* p, dados* lista)
+void* exclui_pessoa(dados* p, dados* lista)
 {
-    dados* aux1=lista->prox;
-    dados* aux2=lista;
-    
-    while(aux1!=NULL)
+  //exclui pessoa de qualquer lugar na lista
+	dados* aux = lista;
+		while(aux->prox != p)//procura quem aponta para o item a ser excluido
+      { 
+				aux = aux->prox;
+			} 
+		aux->prox = p->prox; 
+  //faz o item encontrado apontar para onde o item excluido apontava
+		free (p);
+  //libera o item excluido
+}
+
+void* exclui_primeira_pessoa(dados* lista)
+{
+	dados* aux1;
+	dados* aux2;
+  
+  aux1 = lista->prox; 
+	aux2 = lista->prox; 
+  
+    while(aux1->prox!=NULL)//procura o primeiro item cadastrado
     {
-      aux2 = aux1;
-      aux1 = aux1->prox;
-      printf("\nwhile");
+      aux2=aux1;
+      aux1=aux1->prox;
     }
   
-    aux2->prox = NULL;
-    return aux1; 
+  aux2->prox=NULL; //aterra o item que apontava para o ultimo item(excluido)
+  free (aux1);
+  //libera o item excluido
 }
 
 dados* insere_item()
